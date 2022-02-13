@@ -82,7 +82,11 @@ hist(KGS.well.clean$WELL_DEPTH,breaks = 45,
 
 #changes!
 
-=======
->>>>>>> 0e0fd07202c1de7216d2836bc15ca1db74c4cf20
+#=======
+#>>>>>>> 0e0fd07202c1de7216d2836bc15ca1db74c4cf20
 
 #cool beans?
+#make sure to use git reset --soft HEAD~number of commits back
+#in order to reset
+
+
