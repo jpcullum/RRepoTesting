@@ -28,6 +28,7 @@ library(sn)
 #here, we will have GPS data, depth data, and then values of certain fake elements tested
 #we should create patterns based on location, depth and spatially
 
+<<<<<<< HEAD
 well.data <- data.frame(Sample.ID = as.character(c(1:10000)),
                         Data.Collected = as.character(runif(10000,0,364)),
                         Lat = as.numeric(runif(10000,38,42)),
@@ -81,3 +82,5 @@ hist(KGS.well.clean$WELL_DEPTH,breaks = 45,
 
 #changes!
 
+=======
+>>>>>>> 0e0fd07202c1de7216d2836bc15ca1db74c4cf20
