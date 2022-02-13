@@ -84,3 +84,5 @@ hist(KGS.well.clean$WELL_DEPTH,breaks = 45,
 
 =======
 >>>>>>> 0e0fd07202c1de7216d2836bc15ca1db74c4cf20
+
+#cool beans?
