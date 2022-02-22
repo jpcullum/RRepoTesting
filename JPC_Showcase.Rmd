@@ -37,30 +37,29 @@ Here we can see we are dealing with a simple dataframe with four variables and t
 <br>
 Let us look at the breakdown of each element with some basic statistics.
 
-##### Ozone
-
 ``` {r, warning=F,message=F, fig.align='center'}
 
 library(dplyr)
 library(ggplot2)
 library(gridExtra)
 
-ggplot(data=AirQuality, aes(AirQuality$Ozone)) +
-  geom_histogram()
-
 grid.arrange(
   ggplot(data=AirQuality, aes(AirQuality$Ozone)) +
-    geom_histogram()+
-    xlab("Ozone"),
+    geom_histogram(bins = 30, col = "dark blue", fill = "light blue")+
+    xlab("Ozone")+
+    ylab("Frequency"),
   ggplot(data=AirQuality, aes(AirQuality$Solar.R))+
-    geom_histogram()+
-    xlab("Solar Radiation"),
+    geom_histogram(bins = 30, col = "orange", fill = "gold")+
+    xlab("Solar Radiation") +
+    ylab(""),
   ggplot(data=AirQuality, aes(AirQuality$Wind))+
-    geom_histogram()+
-    xlab("Wind Speed"),
+    geom_histogram(bins = 30, col = "dark gray", fill = "light gray")+
+    xlab("Wind Speed")+
+    ylab("Frequency"),
   ggplot(data=AirQuality, aes(AirQuality$Temp))+
-    geom_histogram()+
-    xlab("Temperature"),
+    geom_histogram(bins = 30, col = "dark red", fill = "red")+
+    xlab("Temperature")+
+    ylab(""),
   nrow=2,
   ncol=2)
 
