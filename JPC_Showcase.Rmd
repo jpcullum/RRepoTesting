@@ -1,30 +1,165 @@
 ---
-title: "MarkdownShowcase"
-author: "JPC"
-date: "2/17/2022"
+title: |
+  <center> Data Analytics </center>
+  <center> Visualization and Analysis Showcase </center>
+author: |
+  <center> Joshua P. Cullum </center>
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+### Overview
+
+Within the world data science and analytics there lie a plethora of techniques and strategies at the finger tips of the analyst. Below I will display a few of the more useful techniques I have used working as a scientist and a student. While each dataset holds unique parameters and presenting data in a useful format varies by each audience, using basic datasets should showcase these methods well. As most analysis work is completed on confidential data, many of my professional projects are currently hidden from public view. As such, below please find a sampling of the techniques I have used, but here displayed on public data.
+
+<br>
+
+#### Table of Contents
+
+1) Data Breakdown
+
+One of the most important steps in any analysis is to understand the data being analyzed. This includes understanding the dataset itself, the limitations of the data, how it was collected, any biases represented in it, and industry knowledge surrounding it. When first surveying any data, a simple analysis can go a long way in preventing future headache. If one can maintain site of the finish line in a maze, it will be easier to find it when digging among the weeds.
+
+``` {r,warning=F,message=F}
+
+AirQuality <- airquality
+
+head(AirQuality)
+str(AirQuality)
+
+AirQuality$Month[!duplicated(AirQuality$Month)]
+
+
 ```
 
-## R Markdown
+<br>
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+Here we can see we are dealing with a simple dataframe with four variables and time points for each observations. This is broken into month and day columns. This is good to know because we may want another column set as "Julian Day" to indicate days in a time series, not just within a month.
+<br>
+Let us look at the breakdown of each element with some basic statistics.
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+##### Ozone
 
-```{r cars}
-summary(cars)
+``` {r, warning=F,message=F, fig.align='center'}
+
+library(dplyr)
+library(ggplot2)
+library(gridExtra)
+
+ggplot(data=AirQuality, aes(AirQuality$Ozone)) +
+  geom_histogram()
+
+grid.arrange(
+  ggplot(data=AirQuality, aes(AirQuality$Ozone)) +
+    geom_histogram()+
+    xlab("Ozone"),
+  ggplot(data=AirQuality, aes(AirQuality$Solar.R))+
+    geom_histogram()+
+    xlab("Solar Radiation"),
+  ggplot(data=AirQuality, aes(AirQuality$Wind))+
+    geom_histogram()+
+    xlab("Wind Speed"),
+  ggplot(data=AirQuality, aes(AirQuality$Temp))+
+    geom_histogram()+
+    xlab("Temperature"),
+  nrow=2,
+  ncol=2)
+
 ```
 
-## Including Plots
+<br>
 
-You can also embed plots, for example:
+##### Solar Radiation
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+``` {r, warning=F,message=F, fig.align='center'}
+
+hist((AirQuality %>% count(Solar.R))$Solar.R, breaks = 20, main = "Histogram of Solar Radiation Data", xlab = "")
+
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+<br>
+
+##### Wind
+
+``` {r, warning=F,message=F, fig.align='center'}
+
+hist((AirQuality %>% count(Wind))$Wind, breaks = 8, main = "Histogram of Wind Data", xlab = "")
+
+```
+
+<br>
+
+##### Temperature
+
+``` {r, warning=F,message=F, fig.align='center'}
+
+hist((AirQuality %>% count(Temp))$Temp, breaks = 3, main = "Histogram of Temperature Data", xlab = "")
+
+```
+
+<br>
+<br>
+
+
+2) Time Series Analysis
+
+3) Spatial Analysis
+
+4) Plotly 3D
+
+5) Animated Series
+
+6) Correlation Matrix Analysis
+
+<br>
+
+### Data Breakdown
+
+
+
+
+### Time Series Analysis
+
+
+
+### Spatial Analysis
+
+
+
+### Plotly 3D
+
+
+
+### Animated Series
+
+
+
+### Correlation Matrix Analysis
+
+
+
+
+### Contact Information
+
+Thank you for taking time to peruse my analysis. While this is a science, it can also fall into the category of an art form. If you would like to contact me for any reason, please feel free to reach me at my email:
+
+Email: joshuapcullum@gmail.com
+
+Even if you would like to touch base on something unrelated to employment, feel free to reach out. While this is my portfolio, I am always interested to connect with others in my field, and am always open to constructive criticism.
+
+<br> 
+<br>
+<br>
+<br>
+
+
+GitHub: 
+
+LinkedIn: 
+
+Portfolio Website: 
+
+<center> End Document
+
+<br>
+<br>
+
