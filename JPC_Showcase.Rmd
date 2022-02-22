@@ -17,6 +17,20 @@ Within the world data science and analytics there lie a plethora of techniques a
 
 1) Data Breakdown
 
+2) Time Series Analysis
+
+3) Spatial Analysis
+
+4) Plotly 3D
+
+5) Animated Series
+
+6) Correlation Matrix Analysis
+
+<br>
+
+### Data Breakdown
+
 One of the most important steps in any analysis is to understand the data being analyzed. This includes understanding the dataset itself, the limitations of the data, how it was collected, any biases represented in it, and industry knowledge surrounding it. When first surveying any data, a simple analysis can go a long way in preventing future headache. If one can maintain site of the finish line in a maze, it will be easier to find it when digging among the weeds.
 
 ``` {r,warning=F,message=F}
@@ -42,78 +56,46 @@ Let us look at the breakdown of each element with some basic statistics.
 library(dplyr)
 library(ggplot2)
 library(gridExtra)
+library(ggthemes)
 
 grid.arrange(
-  ggplot(data=AirQuality, aes(AirQuality$Ozone)) +
-    geom_histogram(bins = 30, col = "dark blue", fill = "light blue")+
+  ggplot(data=AirQuality, aes(Ozone)) +
+    geom_density(alpha=0.6)+
+    geom_histogram(bins = 15, col = "dark blue", fill = "light blue", alpha=0.7)+
     xlab("Ozone")+
-    ylab("Frequency"),
-  ggplot(data=AirQuality, aes(AirQuality$Solar.R))+
-    geom_histogram(bins = 30, col = "orange", fill = "gold")+
+    ylab("Frequency")+
+    theme_hc()+
+    ylim(0,35),
+  ggplot(data=AirQuality, aes(Solar.R))+
+    geom_histogram(bins = 15, col = "orange", fill = "gold", alpha=0.7)+
     xlab("Solar Radiation") +
-    ylab(""),
-  ggplot(data=AirQuality, aes(AirQuality$Wind))+
-    geom_histogram(bins = 30, col = "dark gray", fill = "light gray")+
+    ylab("")+
+    theme_hc()+
+    ylim(0,35),
+  ggplot(data=AirQuality, aes(Wind))+
+    geom_histogram(bins = 15, col = "black", fill = "light gray", alpha=0.7)+
     xlab("Wind Speed")+
-    ylab("Frequency"),
-  ggplot(data=AirQuality, aes(AirQuality$Temp))+
-    geom_histogram(bins = 30, col = "dark red", fill = "red")+
+    ylab("Frequency")+
+    theme_hc()+
+    ylim(0,35),
+  ggplot(data=AirQuality, aes(Temp))+
+    geom_histogram(bins = 15, col = "dark red", fill = "red", alpha=0.7)+
+    geom_density()+
     xlab("Temperature")+
-    ylab(""),
+    ylab("")+
+    theme_hc()+
+    ylim(0,35),
   nrow=2,
-  ncol=2)
+  ncol=2,
+  top = paste("Histograms of Variables in Air Quality Dataset \n ", sep = "\n"))
 
 ```
 
 <br>
 
-##### Solar Radiation
-
-``` {r, warning=F,message=F, fig.align='center'}
-
-hist((AirQuality %>% count(Solar.R))$Solar.R, breaks = 20, main = "Histogram of Solar Radiation Data", xlab = "")
-
-```
-
-<br>
-
-##### Wind
-
-``` {r, warning=F,message=F, fig.align='center'}
-
-hist((AirQuality %>% count(Wind))$Wind, breaks = 8, main = "Histogram of Wind Data", xlab = "")
-
-```
-
-<br>
-
-##### Temperature
-
-``` {r, warning=F,message=F, fig.align='center'}
-
-hist((AirQuality %>% count(Temp))$Temp, breaks = 3, main = "Histogram of Temperature Data", xlab = "")
-
-```
 
 <br>
 <br>
-
-
-2) Time Series Analysis
-
-3) Spatial Analysis
-
-4) Plotly 3D
-
-5) Animated Series
-
-6) Correlation Matrix Analysis
-
-<br>
-
-### Data Breakdown
-
-
 
 
 ### Time Series Analysis
