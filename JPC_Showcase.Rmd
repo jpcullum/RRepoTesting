@@ -1,7 +1,7 @@
 ---
 title: |
-  <center> Data Analytics </center>
-  <center> Visualization and Analysis Showcase </center>
+  <center> Showcase </center>
+  <center> Data Visualization and Analytics </center>
 author: |
   <center> Joshua P. Cullum </center>
 output: html_document
@@ -30,10 +30,25 @@ Within the world data science and analytics there lie a plethora of techniques a
 <br>
 
 ### Data Breakdown
-
+<br>
 One of the most important steps in any analysis is to understand the data being analyzed. This includes understanding the dataset itself, the limitations of the data, how it was collected, any biases represented in it, and industry knowledge surrounding it. When first surveying any data, a simple analysis can go a long way in preventing future headache. If one can maintain site of the finish line in a maze, it will be easier to find it when digging among the weeds.
+<br>
+
+```{r,warning=F,message=F}
+
+library(pastecs)
+library(dplyr)
+library(ggplot2)
+library(gridExtra)
+library(ggthemes)
+
+```
+
 
 ``` {r,warning=F,message=F}
+
+options(scipen = 1000)
+options(digist = 3)
 
 AirQuality <- airquality
 
@@ -43,24 +58,23 @@ str(AirQuality)
 AirQuality$Month[!duplicated(AirQuality$Month)]
 
 
+stat.desc(AirQuality[,1:4])
+
+
+
 ```
 
 <br>
 
 Here we can see we are dealing with a simple dataframe with four variables and time points for each observations. This is broken into month and day columns. This is good to know because we may want another column set as "Julian Day" to indicate days in a time series, not just within a month.
 <br>
-Let us look at the breakdown of each element with some basic statistics.
+Let us look at the breakdown of each element with some basic characteristics.
+<br>
 
 ``` {r, warning=F,message=F, fig.align='center'}
 
-library(dplyr)
-library(ggplot2)
-library(gridExtra)
-library(ggthemes)
-
 grid.arrange(
   ggplot(data=AirQuality, aes(Ozone)) +
-    geom_density(alpha=0.6)+
     geom_histogram(bins = 15, col = "dark blue", fill = "light blue", alpha=0.7)+
     xlab("Ozone")+
     ylab("Frequency")+
@@ -93,12 +107,74 @@ grid.arrange(
 
 <br>
 
+With the above information, we know a bit more about what our dataset holds. We know it contains just over 150 records, which is not a lot but certainly enough to perform a simple analysis on, and it has four variables that are recorded. This dataset is recorded as a time series, so we also have two columns to track the day and month. Looking closer at each variable, we can see all of the basic statistics we would want to know, and then see these visually represented in a Histogram of each variable.
+<br>
+Depending on the direction we would want to take this analysis, this would aid us in determining what we can and cannot do, as well as tell us if we need more data in order to continue.
 
 <br>
 <br>
 
 
 ### Time Series Analysis
+<br>
+Now that we have some basic statistics on the spread of the data itself, we can begin viewing data from various angles. Here, we are fortunate enough to have a dataset that includes a column for time of collection, so we will continue to use the AirQuality dataset built in to RStudio. This will allow us to inspect the data from the perspective of change over time, to determine if there may be any trends present. Analysis allows us to come up with some ideas for future analysis, places we want to focus our effort so to speak. While these trends have not been statistically tested yet, and so we cannot draw conclusions from them, a good analysis will point to areas of interest where we will want to focus our future statistical efforts.
+<br>
+For example, when in a business or scientific setting, resources (especially time) are always limited. A good analysis will highlight the areas which hold the most promise, where that limited capacity can be used to the fullest extent. If a particular area of interest displays a trend within the small initial dataset, that may be an area where a full statistical review with a fully formed, new dataset are in order. While we cannot create hypotheses on a trend in and dataset and use the same dataset to test that same trend, a good analysis can give us a direction where our efforts will be most fruitful.
+<br>
+In this analysis, we will first create a column to specify what would be the "Julian Day", which will allow us to graph this series easily. Secondly, we will create a second column for each of the four variables. This column will place the value as a percentage between minimum and maximum for that column, allowing us to overlay the data and view if any trends are present. All four variables are related in some way, as each atmospheric condition affects the others. However, we must note that altering axes can be dangerous and the graphics must be taken with a grain of salt. They are merely a tool to allow us to inspect the data, and if we determine there may be some sort of pattern it does not necessitate a pattern, but only gives us more grounds to investigate that possibility.
+To create these "percentage" columns, we will use the following equation:
+<br>
+<br>
+$$1-\displaystyle \frac{range - (value - min)}{range}$$
+<br>
+This will produce a number between 0 and 1, with the value displayed as a fraction of the whole. The maximum value in the set will equal 1, while the minimum value in the set will equal 0.
+<br>
+<br>
+
+``` {r, message=F,warning=F, fig.align='center'}
+
+AirQuality$DaySeries <- as.numeric(rownames(AirQuality))
+
+PercEqu <- function(x) {
+  
+  y <- 1- (((max(x, na.rm=T) - min(x, na.rm=T)) - (x - min(x,na.rm=T)))/(max(x, na.rm=T) - min(x, na.rm=T)))
+  return(y)
+  
+}
+
+Percents <- data.frame(apply(AirQuality[,1:4],2,PercEqu))
+colnames(Percents) <- paste(colnames(Percents),"_p",sep="")
+AirQuality <- data.frame(cbind(AirQuality,Percents))
+
+
+
+grid.arrange(
+  ggplot(AirQuality, aes(DaySeries,Ozone_p))+
+    geom_bar(stat="identity", col = "blue", fill = "light blue")+
+    theme_hc()+
+    ylab("Percent Ozone")+
+    xlab(""),
+  ggplot(AirQuality, aes(DaySeries,Solar.R_p))+
+    geom_bar(stat="identity", col = "orange", fill = "gold")+
+    theme_hc()+
+    ylab("Percent Solar Radiation")+
+    xlab(""),
+  ggplot(AirQuality, aes(DaySeries,Wind_p))+
+    geom_bar(stat="identity", col = "black", fill = "light gray")+
+    theme_hc()+
+    ylab("Percent Wind Speed")+
+    xlab("Experiment Day"),
+  ggplot(AirQuality, aes(DaySeries,Temp_p))+
+    geom_bar(stat="identity", col = "dark red", fill = "red")+
+    theme_hc()+
+    ylab("Percent Temperature")+
+    xlab("Experiment Day"),
+nrow=2,
+ncol=2,
+top = paste("Time Series of Each Variable\nExpressed as Percent of Max of Range\n", sep = "\n"))
+
+
+```
 
 
 
