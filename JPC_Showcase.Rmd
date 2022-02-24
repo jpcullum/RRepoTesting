@@ -130,6 +130,30 @@ $$1-\displaystyle \frac{range - (value - min)}{range}$$
 This will produce a number between 0 and 1, with the value displayed as a fraction of the whole. The maximum value in the set will equal 1, while the minimum value in the set will equal 0.
 <br>
 <br>
+Before we complete that secondary analysis bringing the elements together, let us look at the data all togather:
+<br>
+<br>
+```{r,warning=F,message=F,fig.align='center'}
+
+stack_AQ <- stack(AirQuality[,1:4]) %>%
+  mutate(Day = rep(1:153,4)) %>%
+  mutate(col = ifelse(ind=="Ozone","dark blue",ifelse(ind=="Solar.R", "orange", ifelse(ind=="Wind","black","dark red")))) %>%
+  mutate(fill = ifelse(ind=="Ozone","light blue",ifelse(ind=="Solar.R", "gold", ifelse(ind=="Wind","light gray","red"))))
+
+ggplot(
+  stack_AQ, 
+  aes(Day, values, fill = factor(ind))
+) +
+  geom_point(pch=21, size =2)+
+  labs(x = "Experiment Day", y = "", fill = "")+
+  theme_hc()+
+  scale_color_manual(values = c("light blue","gold","light gray","red"),
+                     aesthetics = "fill"
+  )
+
+```
+<br>
+<br>
 
 ``` {r, message=F,warning=F, fig.align='center'}
 
@@ -150,24 +174,24 @@ AirQuality <- data.frame(cbind(AirQuality,Percents))
 
 grid.arrange(
   ggplot(AirQuality, aes(DaySeries,Ozone_p))+
-    geom_bar(stat="identity", col = "blue", fill = "light blue")+
+    geom_bar(stat="identity", col = "dark blue", fill = "light blue")+
     theme_hc()+
-    ylab("Percent Ozone")+
+    ylab("Ozone")+
     xlab(""),
   ggplot(AirQuality, aes(DaySeries,Solar.R_p))+
     geom_bar(stat="identity", col = "orange", fill = "gold")+
     theme_hc()+
-    ylab("Percent Solar Radiation")+
+    ylab("Solar Radiation")+
     xlab(""),
   ggplot(AirQuality, aes(DaySeries,Wind_p))+
     geom_bar(stat="identity", col = "black", fill = "light gray")+
     theme_hc()+
-    ylab("Percent Wind Speed")+
+    ylab("Wind Speed")+
     xlab("Experiment Day"),
   ggplot(AirQuality, aes(DaySeries,Temp_p))+
     geom_bar(stat="identity", col = "dark red", fill = "red")+
     theme_hc()+
-    ylab("Percent Temperature")+
+    ylab("Temperature")+
     xlab("Experiment Day"),
 nrow=2,
 ncol=2,
@@ -176,7 +200,12 @@ top = paste("Time Series of Each Variable\nExpressed as Percent of Max of Range\
 
 ```
 
+<br>
+<br>
+Looking at these graphics, we can see that there may be a similarity in trends between Ozone and Temperature. This could make sense, as Ozone does affect temperature.
 
+<br>
+<br>
 
 ### Spatial Analysis
 
