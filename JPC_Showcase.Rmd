@@ -25,7 +25,7 @@ Within the world data science and analytics there lie a plethora of techniques a
 
 5) Animated Series
 
-6) Correlation Matrix Analysis
+6) Correlation Analysis
 
 <br>
 
@@ -37,10 +37,15 @@ One of the most important steps in any analysis is to understand the data being 
 ```{r,warning=F,message=F}
 
 library(pastecs)
-library(dplyr)
 library(ggplot2)
 library(gridExtra)
 library(ggthemes)
+library(RColorBrewer)
+library(gifski)
+library(gganimate)
+library(transformr)
+library(dplyr)
+
 
 ```
 
@@ -73,27 +78,36 @@ Let us look at the breakdown of each element with some basic characteristics.
 
 ``` {r, warning=F,message=F, fig.align='center'}
 
+Blues <- brewer.pal(9,"Blues")
+
+OrRd <- brewer.pal(9,"OrRd")
+
+YlOrRd <- brewer.pal(9,"YlOrRd")
+
+Greys <- brewer.pal(9,"Greys")
+
+
 grid.arrange(
   ggplot(data=AirQuality, aes(Ozone)) +
-    geom_histogram(bins = 15, col = "dark blue", fill = "light blue", alpha=0.7)+
+    geom_histogram(bins = 15, col = Blues[8], fill = Blues[6], alpha=0.7)+
     xlab("Ozone")+
     ylab("Frequency")+
     theme_hc()+
     ylim(0,35),
   ggplot(data=AirQuality, aes(Solar.R))+
-    geom_histogram(bins = 15, col = "orange", fill = "gold", alpha=0.7)+
+    geom_histogram(bins = 15, col = YlOrRd[4], fill = YlOrRd[2], alpha=0.7)+
     xlab("Solar Radiation") +
     ylab("")+
     theme_hc()+
     ylim(0,35),
   ggplot(data=AirQuality, aes(Wind))+
-    geom_histogram(bins = 15, col = "black", fill = "light gray", alpha=0.7)+
+    geom_histogram(bins = 15, col = Greys[6], fill = Greys[4], alpha=0.7)+
     xlab("Wind Speed")+
     ylab("Frequency")+
     theme_hc()+
     ylim(0,35),
   ggplot(data=AirQuality, aes(Temp))+
-    geom_histogram(bins = 15, col = "dark red", fill = "red", alpha=0.7)+
+    geom_histogram(bins = 15, col = OrRd[8], fill = OrRd[6], alpha=0.7)+
     geom_density()+
     xlab("Temperature")+
     ylab("")+
@@ -136,19 +150,18 @@ Before we complete that secondary analysis bringing the elements together, let u
 ```{r,warning=F,message=F,fig.align='center'}
 
 stack_AQ <- stack(AirQuality[,1:4]) %>%
-  mutate(Day = rep(1:153,4)) %>%
-  mutate(col = ifelse(ind=="Ozone","dark blue",ifelse(ind=="Solar.R", "orange", ifelse(ind=="Wind","black","dark red")))) %>%
-  mutate(fill = ifelse(ind=="Ozone","light blue",ifelse(ind=="Solar.R", "gold", ifelse(ind=="Wind","light gray","red"))))
+  mutate(Day = rep(1:153,4))
 
 ggplot(
   stack_AQ, 
   aes(Day, values, fill = factor(ind))
 ) +
-  geom_point(pch=21, size =2)+
+  geom_point(pch=21, size =3)+
   labs(x = "Experiment Day", y = "", fill = "")+
   theme_hc()+
-  scale_color_manual(values = c("light blue","gold","light gray","red"),
-                     aesthetics = "fill"
+  scale_color_manual(values = c(Blues[6],YlOrRd[2],Greys[4],OrRd[6]),
+                     aesthetics = "fill",
+                     labels = c("Ozone","Solar Radiation","Wind","Temperature")
   )
 
 ```
@@ -174,22 +187,22 @@ AirQuality <- data.frame(cbind(AirQuality,Percents))
 
 grid.arrange(
   ggplot(AirQuality, aes(DaySeries,Ozone_p))+
-    geom_bar(stat="identity", col = "dark blue", fill = "light blue")+
+    geom_bar(stat="identity", col = Blues[8], fill = Blues[6])+
     theme_hc()+
     ylab("Ozone")+
     xlab(""),
   ggplot(AirQuality, aes(DaySeries,Solar.R_p))+
-    geom_bar(stat="identity", col = "orange", fill = "gold")+
+    geom_bar(stat="identity", col = YlOrRd[4], fill = YlOrRd[2])+
     theme_hc()+
     ylab("Solar Radiation")+
     xlab(""),
   ggplot(AirQuality, aes(DaySeries,Wind_p))+
-    geom_bar(stat="identity", col = "black", fill = "light gray")+
+    geom_bar(stat="identity", col = Greys[6], fill = Greys[4])+
     theme_hc()+
     ylab("Wind Speed")+
     xlab("Experiment Day"),
   ggplot(AirQuality, aes(DaySeries,Temp_p))+
-    geom_bar(stat="identity", col = "dark red", fill = "red")+
+    geom_bar(stat="identity", col = OrRd[8], fill = OrRd[6])+
     theme_hc()+
     ylab("Temperature")+
     xlab("Experiment Day"),
@@ -203,6 +216,31 @@ top = paste("Time Series of Each Variable\nExpressed as Percent of Max of Range\
 <br>
 <br>
 Looking at these graphics, we can see that there may be a similarity in trends between Ozone and Temperature. This could make sense, as Ozone does affect temperature.
+<br>
+Let us take one final look at this in a small animated graphic below:
+<br>
+``` {r,message=F,warning=F}
+
+stack_AQ_perc <- stack(AirQuality[,c(11,8)]) %>%
+                         mutate(Day = rep(1:153,2)) %>%
+                         filter(!is.na(values)) %>%
+                         mutate(col = ifelse(ind == "Ozone_p", Blues[8], OrRd[8]))
+  
+ggplot(stack_AQ_perc,
+       aes(Day,values, fill = ind)) +
+  geom_area(stat="identity", 
+            position="identity",
+            col = stack_AQ_perc$col,
+            size = 0.5,
+            alpha = 0.8) +
+  scale_fill_manual(values = c(OrRd[6],Blues[6]), labels = c("Temperature", "Ozone")) +
+  theme_hc()+
+  labs(x="Experiment Day",y="", fill = "", title = "Temperature and Ozone Comparison")+
+  theme(plot.title = element_text(hjust = 0.5))+
+  transition_reveal(Day)
+
+
+```
 
 <br>
 <br>
