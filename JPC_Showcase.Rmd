@@ -44,6 +44,7 @@ library(RColorBrewer)
 library(gifski)
 library(gganimate)
 library(transformr)
+library(spData)
 library(dplyr)
 
 
@@ -241,12 +242,22 @@ ggplot(stack_AQ_perc,
 
 
 ```
-
+<br>
+<br>
+The animation gives us a good idea of how Ozone and Temperature appear to be related, showing that the rises and falls of each seem to come together. 
 <br>
 <br>
 
 ### Spatial Analysis
+<br>
+One of the more interesting analyses possible with R is Spatial Analysis. Although most complex spatial analysis is conducted in something like ESRI's ArcGIS Pro, spatial analysis can also be accomplished in R, which makes integration with code quite simple. Here, we will bring in a spatial data set and visually analyze it with an interactive LeafLet map, which is often combined with an RShiny application, and then we will take it a step further and use Plotly to analyze it in three dimensions.
+<br>
+<br>
+```{r,message=F,warning=F}
 
+
+
+```
 
 
 ### Plotly 3D
