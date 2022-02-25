@@ -45,6 +45,8 @@ library(gifski)
 library(gganimate)
 library(transformr)
 library(spData)
+library(leaflet)
+library(plotly)
 library(dplyr)
 
 
@@ -252,16 +254,76 @@ The animation gives us a good idea of how Ozone and Temperature appear to be rel
 <br>
 One of the more interesting analyses possible with R is Spatial Analysis. Although most complex spatial analysis is conducted in something like ESRI's ArcGIS Pro, spatial analysis can also be accomplished in R, which makes integration with code quite simple. Here, we will bring in a spatial data set and visually analyze it with an interactive LeafLet map, which is often combined with an RShiny application, and then we will take it a step further and use Plotly to analyze it in three dimensions.
 <br>
+We will bring in the `boston.c` dataset from the `spData` package. This is a housing dataset from 1978.
+<br>
 <br>
 ```{r,message=F,warning=F}
 
+Boston <- boston.c
 
+RdYlBu <- brewer.pal(11,"RdYlBu")
+
+pal.values.pop <- colorNumeric(
+  palette = c(RdYlBu[11], RdYlBu[8], RdYlBu[4],RdYlBu[1]),
+  domain = Boston$CMEDV
+  
+)
+
+
+leaflet(width = 900) %>%
+  addTiles() %>%
+  addCircleMarkers(lng = Boston$LON,
+                   lat = Boston$LAT,
+                   radius = 7,
+                   fillColor = pal.values.pop(Boston$CMEDV),
+                   color = pal.values.pop(Boston$CMEDV),
+                   stroke = T,
+                   weight = 2,
+                   fillOpacity = 0.6,
+                   opacity = 1,
+                   popup = paste0("Median Home Value: $",Boston$CMEDV*1000),
+                   options = popupOptions(closeButton = T))
+
+```
+<br>
+<br>
+Now, we can compare median home value to Crime Rate, per capita.
+<br>
+<br>
+```{r,message=F,warning=F}
+
+pal.values.cr <- colorNumeric(
+  palette = c(RdYlBu[11],RdYlBu[4],RdYlBu[1]),
+  domain = Boston$CRIM
+  
+)
+
+leaflet(width = 900) %>%
+  addTiles() %>%
+  addCircleMarkers(lng = Boston$LON,
+                   lat = Boston$LAT,
+                   radius = 7,
+                   fillColor = pal.values.cr(Boston$CRIM),
+                   color = pal.values.cr(Boston$CRIM),
+                   stroke = T,
+                   weight = 2,
+                   fillOpacity = 0.6,
+                   opacity = 1,
+                   popup = paste0("Crime per capita: ",Boston$CRIM),
+                   options = popupOptions(closeButton = T))
 
 ```
 
 
-### Plotly 3D
+<br>
+<br>
+Without making an judgements and acknowledging this is a much more complex we can at least visibly demonstrate a correlation between crime rate and median house value, in Boston in 1978. Clicking on any point yields the respective value.
+<br>
+<br>
 
+### Plotly 3D
+<br>
+`Plotly` provides a fullset of techniques to present graphics, but the way in which I prefer to use it is to make 3D plots. `ggplot2` creates fantastic, easily understood plots and graphs for normal purposes, but I find `Plotly` to function better in the 3D realm.
 
 
 ### Animated Series
