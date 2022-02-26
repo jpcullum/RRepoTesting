@@ -46,6 +46,7 @@ library(transformr)
 library(spData)
 library(leaflet)
 library(plotly)
+library(ggbiplot)
 library(dplyr)
 
 
@@ -375,10 +376,46 @@ plot_ly(Boston,
 <br>
 <br>
 We can see here that the spot with the highest crime rate lines up again with the poorest area of the city. 
+<br>
+<br>
 
 
-### Correlation Matrix Analysis
+### Principle Component Analysis
+<br>
+Finally, we can complete a small Principle Component Analysis (PCA). This commonly used on "wide" datasets, those with many variables. Through a mathematical process, we can take all of these variables and plot them along "principle components", allowing us to search for the variables which have the strongest correlation across the dataset, and those which account for the largest variation within it.
+<br>
+This can be quite useful in real-world application, as we often encounter large datasets with many variables, and picking through them all for correlation and variation can be tedious. This method, especially using R, makes it quite simple to at least get a handle on the situation.
+<br>
+Oftentimes the `mtcars` dataset in RStudio is used to display PCA Analysis, so we will use the `iris` dataset, which holds fewer variables but will still display the usefulness of the code. This will also allow us to write code that is not as readily copied from the web (as I prefer to write my own code learning from documentation, etc.).
+<br>
+<br>
+```{r,warning=F,message=F}
 
+head(iris)
+
+iris.pca <- prcomp(iris[,1:4],scale.=T,center = T)
+
+summary(iris.pca)
+
+
+```
+<br>
+<br>
+How do we interpret this initial summary? Here we can see that between the first and second principle component (PC1 and PC2), about 96% of the variance is captured. That is a good thing, and will allow us to complete a robust analysis. Let us view this visually.
+<br>
+```{r,message=F,warning=F,fig.align='center'}
+
+ggbiplot(iris.pca,
+         groups=iris$Species,
+         ellipse = T,
+         var.scale = 1,
+         obs.scale = 1)
+  
+
+```
+
+<br>
+<br>
 
 
 
