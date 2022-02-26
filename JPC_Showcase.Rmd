@@ -1,7 +1,8 @@
 ---
 title: |
-  <center> Showcase </center>
-  <center> Data Visualization and Analytics </center>
+  <center> Date: </center>
+  <center> Visualization and Analytics </center>
+  <center>    </center>
 author: |
   <center> Joshua P. Cullum </center>
 output: html_document
@@ -23,9 +24,7 @@ Within the world data science and analytics there lie a plethora of techniques a
 
 4) Plotly 3D
 
-5) Animated Series
-
-6) Correlation Analysis
+5) Correlation Analysis
 
 <br>
 
@@ -324,10 +323,58 @@ Without making an judgements and acknowledging this is a much more complex we ca
 ### Plotly 3D
 <br>
 `Plotly` provides a fullset of techniques to present graphics, but the way in which I prefer to use it is to make 3D plots. `ggplot2` creates fantastic, easily understood plots and graphs for normal purposes, but I find `Plotly` to function better in the 3D realm.
+<br>
+```{r,message=F,warning=F}
 
 
-### Animated Series
+plot_ly(Boston, 
+        x=~LON, 
+        y=~LAT, 
+        z = ~CMEDV, 
+        type="scatter3d", 
+        marker= list(size = 3, 
+                     color = ~CMEDV,
+                     colorscale =c(RdYlBu[11], RdYlBu[8], RdYlBu[4],RdYlBu[1]),
+                     showscale=T)
+        ) %>%
+  layout(scene = list(
+    xaxis=list(title="Longitude"),
+    yaxis=list(title="Latitude"),
+    zaxis=list(title="Median House Price")
+  ))
 
+
+```
+<br>
+<br>
+This provides a similar view to the one provided in two dimensions, but provides a more striking view of the start differences in housing prices across such a small area. In fact, in the 3D you can see the river cutting the poorest section of town in two, with the more wealthy side of the river have a smaller portion of the economically challenged section.
+<br>
+Now we can compare the crime rates in a similar fashion:
+<br>
+```{r,message=F,warning=F}
+
+
+plot_ly(Boston, 
+        x=~LON, 
+        y=~LAT, 
+        z = ~CRIM, 
+        type="scatter3d", 
+        marker= list(size = 3, 
+                     color = ~CRIM,
+                     colorscale =c(RdYlBu[11],RdYlBu[4],RdYlBu[1]),
+                     showscale=T)
+        ) %>%
+  layout(scene = list(
+    xaxis=list(title="Longitude"),
+    yaxis=list(title="Latitude"),
+    zaxis=list(title="Crime Rate")
+  ))
+
+
+```
+<br>
+<br>
+We can see here that the spot with the highest crime rate lines up again with the poorest area of the city. 
 
 
 ### Correlation Matrix Analysis
