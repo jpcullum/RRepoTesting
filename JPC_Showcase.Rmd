@@ -1,6 +1,6 @@
 ---
 title: |
-  <center> Date: </center>
+  <center> Data: </center>
   <center> Visualization and Analytics </center>
   <center>    </center>
 author: |
@@ -144,11 +144,10 @@ To create these "percentage" columns, we will use the following equation:
 <br>
 $$1-\displaystyle \frac{range - (value - min)}{range}$$
 <br>
+<br>
 This will produce a number between 0 and 1, with the value displayed as a fraction of the whole. The maximum value in the set will equal 1, while the minimum value in the set will equal 0.
 <br>
-<br>
 Before we complete that secondary analysis bringing the elements together, let us look at the data all togather:
-<br>
 <br>
 ```{r,warning=F,message=F,fig.align='center'}
 
@@ -256,7 +255,6 @@ One of the more interesting analyses possible with R is Spatial Analysis. Althou
 <br>
 We will bring in the `boston.c` dataset from the `spData` package. This is a housing dataset from 1978.
 <br>
-<br>
 ```{r,message=F,warning=F}
 
 Boston <- boston.c
@@ -288,7 +286,6 @@ leaflet(width = 900) %>%
 <br>
 <br>
 Now, we can compare median home value to Crime Rate, per capita.
-<br>
 <br>
 ```{r,message=F,warning=F}
 
@@ -388,7 +385,6 @@ This can be quite useful in real-world application, as we often encounter large 
 <br>
 Oftentimes the `mtcars` dataset in RStudio is used to display PCA Analysis, so we will use the `iris` dataset, which holds fewer variables but will still display the usefulness of the code. This will also allow us to write code that is not as readily copied from the web (as I prefer to write my own code learning from documentation, etc.).
 <br>
-<br>
 ```{r,warning=F,message=F}
 
 head(iris)
@@ -409,11 +405,17 @@ ggbiplot(iris.pca,
          groups=iris$Species,
          ellipse = T,
          var.scale = 1,
-         obs.scale = 1)
+         obs.scale = 1) +
+  ggtitle("PCA of Iris Dataset")+
+  xlab("PC1")+
+  ylab("PC2")+
+  theme(plot.title = element_text(hjust = 0.5))
   
 
 ```
-
+<br>
+<br>
+Here we can see the principle component analysis visually displayed for a simply analysis, and we can view how the variables interact and how the different groups are separated along those variables. Without going into much detail, we can see how using R to complete what is a mathematically complex analysis involving linear algebra and matrices can be easily completed in a few steps using a couple lines of code. 
 <br>
 <br>
 
@@ -433,11 +435,11 @@ Even if you would like to touch base on something unrelated to employment, feel 
 <br>
 
 
-GitHub: 
+GitHub: https://github.com/jpcullum
 
-LinkedIn: 
+LinkedIn: https://www.linkedin.com/in/josh-cullum-74891722b/
 
-Portfolio Website: 
+Portfolio Website: https://jpcullum.github.io/
 
 <center> End Document
 
