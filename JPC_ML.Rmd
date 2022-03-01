@@ -1,30 +1,54 @@
 ---
-title: "ML"
-author: "JPC"
-date: "3/1/2022"
+title: "Machine Learning in R"
+author: "Joshua P. Cullum"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
+### Purpose
+<br>
 
-## R Markdown
+<br>
+<br>
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+### Dataset and Setup
+<br>
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+<br>
+<br>
 
-```{r cars}
-summary(cars)
-```
+### Algorithm Use
+<br>
 
-## Including Plots
+<br>
+<br>
 
-You can also embed plots, for example:
+### Final Thoughts
+<br>
 
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
+<br>
+<br>
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+### Contact Information
+<br>
+Thank you for taking time to peruse my analysis. While this is a science, it can also fall into the category of an art form. If you would like to contact me for any reason, please feel free to reach me at my email:
+
+Email: joshuapcullum@gmail.com
+
+Even if you would like to touch base on something unrelated to employment, feel free to reach out. While this is my portfolio, I am always interested to connect with others in my field, and am always open to constructive criticism.
+
+<br> 
+<br>
+<br>
+<br>
+
+
+GitHub: https://github.com/jpcullum
+
+LinkedIn: https://www.linkedin.com/in/josh-cullum-74891722b/
+
+Portfolio Website: https://jpcullum.github.io/
+
+<center> End Document
+
+<br>
+<br>

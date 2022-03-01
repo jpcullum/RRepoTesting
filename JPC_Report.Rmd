@@ -1,30 +1,56 @@
 ---
-title: "Report Writing"
-author: "JPC"
-date: "3/1/2022"
+title: "Automated Report Writing"
+author: "Joshua P. Cullum"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
+### Purpose
+<br>
+Writing reproducible reports remains an important component of any operation, whether this be for something as simple as sales reports for a lemonade stand or fluctuating Phosphate levels in discharge water from a water treatment plant or user interaction data at a multi-million dollar corporation. While there are many sophisticated tools enabling easy, consistent report writing, sometimes it is important to be able to build small scripts to complete daily tasks at an individual level, freeing up time for more important things.
+That is something I have learned working my job at in an office setting at a state environmental agency. Many aspects of my job are consistent, reproducible, and would actually benefit from having a structured framework as opposed to being individually crafted every week. Automation not only saves time it also increases savings exponentially by being more accurate, having no transcription errors, and removing the human from the equation. Ask any professional in almost any field and they will tell you the largest source of error is that of human error. In terms of consistent reports, taking the writer out of the equation except for the initial setup can accomplish this.
+<br>
+We will bring in a built-in dataset in RStudio, structurally analyze it and briefly lay out the direction this report will head, followed by building this automation using R.
+<br>
+<br>
+### Dataset and Structure
+<br>
 
-## R Markdown
+<br>
+<br>
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+### Report Writing
+<br>
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+<br>
+<br>
 
-```{r cars}
-summary(cars)
-```
+### Conclusions
+<br>
 
-## Including Plots
+<br>
+<br>
 
-You can also embed plots, for example:
+### Contact Information
+<br>
+Thank you for taking time to peruse my analysis. While this is a science, it can also fall into the category of an art form. If you would like to contact me for any reason, please feel free to reach me at my email:
 
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
+Email: joshuapcullum@gmail.com
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+Even if you would like to touch base on something unrelated to employment, feel free to reach out. While this is my portfolio, I am always interested to connect with others in my field, and am always open to constructive criticism.
+
+<br> 
+<br>
+<br>
+<br>
+
+
+GitHub: https://github.com/jpcullum
+
+LinkedIn: https://www.linkedin.com/in/josh-cullum-74891722b/
+
+Portfolio Website: https://jpcullum.github.io/
+
+<center> End Document
+
+<br>
+<br>
