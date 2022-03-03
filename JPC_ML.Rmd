@@ -6,22 +6,175 @@ output: html_document
 
 ### Purpose
 <br>
-
+Models lie at the heart of data science. While much of my experience lies in the data analysis realm, my professional education also exposed me to the use and building of many types of models. These models focused on my field of study, hydrologic flows, and were built using some pre-collected data and manual tweaking. While this method has been used for decades and does work, I have developed an interest in Machine Learning models. Currently, I am learning all I can about them, how to use them, when to use them, and especially how to use them in R. The below document was a small learning exercise I completed. I will be using the k-nearest neighbors algorithm.
 <br>
 <br>
 
 ### Dataset and Setup
 <br>
+For this analysis, we will stick with the `iris` dataset built in to R. This dataset is commonly used for learning the ins and outs of the KNN algorithm, as it is simple and easy to work with. These principals can then be applied to more complex situations. Looking towards a regression style model as opposed to classification, we could theoretically use a model such as this to predict what nutrient loading we would experience on a given day in a lake. With a dataset of variables such as rainfall, land cover, growth stage, time of year, etc. we could train a dataset to estimate nutrient loading to a lake. Once trained, this model could be used to predict the outcome of certain changes on a landscape, which would help in land planning practices. Or, towards the business analytics side, we could use a model such as this to predict changes in consumer behavior based on what products are available and at what price, how a certain sale would affect revenue from other items, and the like.
+<br>
+Going back to our KNN model, we will first take a look at the data, comparing each variable to each other, grouping by species. 
+<br>
+```{r, warning=F,message=F}
+
+library(class)
+library(caret)
+library(plyr)
+library(ggpubr)
+library(ggplot2)
+library(dplyr)
+
+
+Iris.data <- iris
+
+head(Iris.data)
+str(Iris.data)
+
+ggarrange(
+  ggplot(Iris.data, aes(Sepal.Width, Sepal.Length, col = Species))+
+    geom_point(size = 2)+
+    theme(legend.position = "none"),
+  ggplot(Iris.data, aes(Sepal.Width, Petal.Length, col = Species))+
+    geom_point(size = 2)+
+    theme(legend.position = "none"),
+  ggplot(Iris.data, aes(Sepal.Width, Petal.Width, col = Species))+
+    geom_point(size = 2)+
+    theme(legend.position = "none"),
+  ggplot(Iris.data, aes(Sepal.Length, Petal.Length, col = Species))+
+    geom_point(size = 2)+
+    theme(legend.position = "none"),
+  ggplot(Iris.data, aes(Sepal.Length, Petal.Width, col = Species))+
+    geom_point(size = 2)+
+    theme(legend.position = "none"),
+  ggplot(Iris.data, aes(Petal.Length, Petal.Width, col = Species))+
+    geom_point(size = 2)+
+    theme(legend.position = "none"),
+  ncol = 3, 
+  nrow = 2,
+  common.legend=T,
+  legend="bottom")
+
+```
+<br>
+<br>
+Looking at the graphs, we can see there is solid differentiation between species on most variables. When combined, this should produce a very clean clustering allowing for an accurate and precise model.
+<br>
+Let us look at our data more closely to see if it needs to be normalized before we create a model:
+<br>
+```{r,warning=F,message=F}
+
+summary(Iris.data)
+
+```
+<br>
+<br>
+Here we can see that the values all lie within a fairly narrow range. Because we are not dealing with orders of magnitude difference, we would not need to normalize here. If we did need to normalize, we could create a function such as this:
+<br>
+$$\displaystyle \frac{x - min(x)}{max(x) - min(x)}$$
+<br>
+We could then apply this to each variable (other than Species, as that is our target, factor variable). This would normalize our data if, for example, `Sepal.Length` ranged between 30 and 30,000, while `Petal.Length` ranged between 1 and 5. 
+<br>
+<br>
+
+### K-Nearest Neighbor
+<br>
+Now that we have a handle on the data itself and know that we can use it as it sits, we can begin the preparation for the model. As with any good model, we need to be able to test it. There is no use in a model that cannot be tested. Per standard procedure, we must split the data into a Training and Test dataset. Here, we must be careful to accurately reflect all species present. Because this dataset is split into three even pieces, this means that our test and training sets must bare the same resemblance, simply small sets. For example, if we grabbed the first 100 rows of the data for the training set and left the last 50, we would miss an entire species. On the other hand, we need to be careful with a random sampling, as it is possible we could accidentally end up with a split similar to 45-45-10, or the like. This would not accurately reflect our data and thus would create a biased model. So the two datasets need to be random but also accurately reflect the composition of the dataset.
+<br>
+```{r,warning=F,message=F}
+
+set.seed(1234)
+
+ind <- sample(2, nrow(Iris.data), replace=T, prob=c(0.67,0.33))
+
+Iris.training <- Iris.data[ind==1,1:4]
+
+Iris.test <- Iris.data[ind==2,1:4]
+
+Iris.trainingLab <- Iris.data[ind==1,5]
+
+Iris.testLab <- Iris.data[ind==2,5]
+
+summary(Iris.trainingLab)
+summary(Iris.testLab)
+
+```
+<br>
+<br>
+Here we can see that we set a random seed, then created tow datasets, a training and a test, split in a 2/3 and 1/3 way. We created an index for the data randomly, then selected those rows out of the set. Labels are stored separtely for easy model running later (as the label is the target factor). Just to make sure everything seems alright we can look at a summary of each label set, which shows us that the species are split roughly evenly within each dataset. 
+<br>
+For the model itself, we will start off with K values of 3 and 5, and then run an optimization later on.
+<br>
+<br>
+```{r,warning=F,message=F}
+
+Iris.knn.3 <- knn(train=Iris.training,test=Iris.test,cl=Iris.trainingLab,k=3)
+Iris.knn.5 <- knn(train=Iris.training,test=Iris.test,cl=Iris.trainingLab,k=5)
+
+Mod.eval.3 <- data.frame(Iris.testLab, Iris.knn.3) %>% rename("Obs Species" = "Iris.testLab","Pred Species" = "Iris.knn.3")
+
+Mod.eval.5 <- data.frame(Iris.testLab, Iris.knn.5) %>% rename("Obs Species" = "Iris.testLab","Pred Species" = "Iris.knn.5")
+
+Mod.eval.3
+Mod.eval.5
+
+```
+<br>
+<br>
+Briefly looking over the data, we can see that it was almost entirely accurate, with only one error in the K=3 setup. This occurred when the model should have labeled the instance as Virginica but instead labeled it as Versicolor. Nonetheless, this model faired well. Let us look at a simple evaluation using the `caret` package in R.
+
+```{r, message=F,warning=F}
+
+confusionMatrix(table(Iris.knn.3, Iris.testLab))
+confusionMatrix(table(Iris.knn.5, Iris.testLab))
+
+```
+<br>
+<br>
+We can see here the accuracy displayed for each one, as well as a matrix analysis. To better understand the model, we can plot the accuracy vs. the k-value chosen, using a loop, and running the model with k = 1:15. Then, we will run this 100 times and average those 10 runs of k=1:15.
+<br>
+```{r,warning=F,message=F}
+
+accuracy <- vector()
+
+run_by <- 100
+
+for (i in rep(1:15,run_by)) {
+  
+  Iris.knn.acc.t <- knn(train=Iris.training,test=Iris.test,cl=Iris.trainingLab,k=i)
+  
+    accuracy <- append(accuracy,confusionMatrix(table(Iris.knn.acc.t,   Iris.testLab))$overall[1])
+
+  }
+
+Mod.eval <- data.frame(accuracy = accuracy)
+
+st <- seq(1,run_by*15,by=15)
+fi <- seq(15,run_by*15,by=15)
+
+Mod.eval.test <- data.frame(n = 1:15)
+
+for (i in 1:run_by) {
+  
+  Mod.eval.loop <- data.frame(Mod.eval[st[i]:fi[i],1])
+  
+  names(Mod.eval.loop)[1] <- paste("A",i)
+  
+  Mod.eval.test <- cbind(Mod.eval.test, Mod.eval.loop)
+
+}
+
+Mod.eval.test$avg <- (rowSums(Mod.eval.test)-Mod.eval.test[,1])/run_by
+
+ggplot(Mod.eval.test, aes(n,avg))+geom_point(size = 3)
+
+```
+<br>
+<br>
+From the graph we can see that the best K may be either 5, 6, or 7. Below that accuracy declines, and after that accuracy seems to wander.
 
 <br>
 <br>
-
-### Algorithm Use
-<br>
-
-<br>
-<br>
-
 ### Final Thoughts
 <br>
 
