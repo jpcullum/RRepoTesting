@@ -12,13 +12,147 @@ That is something I have learned working my job at in an office setting at a sta
 We will bring in a built-in dataset in RStudio, structurally analyze it and briefly lay out the direction this report will head, followed by building this automation using R.
 <br>
 <br>
+
 ### Dataset and Structure
 <br>
+For this example, we will create our own dataset. This will allow us to build something similar to record keeping for weekly revenue for a business. Most customer databases are based in SQL, as this type of data (sales, customers, items, etc.) is best kept in a relational database. For the sake of this markdown document, we will build a simplified version of this in R, by creating what would be a query table.
+<br>
+Our table will be similar to the following
+<br>
+
+ Transaction   Product   Customer   # of Items   UPrice   UCost   Gross   Net
+------------- --------- ---------- ------------ -------- ------- ------- -----
+1             P1        C1         3            3.75     3.25    11.25   1.5
 
 <br>
+If we make a table such as this, we can extract data such as:
 <br>
+
+1. Monthly revenue
+2. Monthly net profit
+3. Daily profit
+4. Comparison to targets
+5. Customer base growth
+
+<br>
+We will randomly populate this table with records, and then create a simple analysis for each item in the list above and then splice it all together for a simple report with some graphics.
+<br>
+<br>
+```{r, message=F,warning=F}
+
+SalesData <- data.frame(Day = sample(1:31,10000,replace=T),
+                        Customer = c(sample(1:100,9000,replace=T), rep(NA,1000)),
+                        Product = sample(1:20,10000,replace=T),
+                        Count = sample(1:55, 10000, replace = T))
+
+SalesData <- SalesData[order(SalesData$Day),]
+
+SalesData$Transaction <- 1:10000
+
+Products <- data.frame(Product = 1:20,
+                       Price = runif(20,2,12),
+                       Cost = (sample(78:91, 20, replace = T))/100)
+
+Products$Cost <- Products$Price * Products$Cost
+
+SalesData <- merge(SalesData,Products, by = "Product", all.x = T, all.y=T)
+
+SalesData$Gross <- SalesData$Price*SalesData$Count
+
+SalesData$Net <- SalesData$Gross - (SalesData$Cost*SalesData$Count)
+
+```
 
 ### Report Writing
+<br>
+Here we will break down each item at a time, run some numbers, and create some visuals. Then we will build it all together into a report. This is the code that could be run every week, no matter the numbers at place, to produce a consistent report at the end of every week. This makes it easy for everyone to visual patterns over time, and cuts down on time needed to create reports.
+<br>
+<br>
+
+##### Weekly Revenue
+<br>
+```{r,warning=F,message=F,fig.align='center'}
+
+Rev.t <- sum(SalesData$Gross)
+
+Rev.t
+
+```
+
+<br>
+<br>
+
+##### Weekly Net Profit
+<br>
+```{r,warning=F,message=F,fig.align='center'}
+
+Prof.net <- sum(SalesData$Net)
+
+Prof.net
+
+```
+<br>
+<br>
+
+##### Daily Profit Chart
+<br>
+```{r,warning=F,message=F,fig.align='center'}
+
+library(ggplot2)
+library(dplyr)
+
+DailySales <- SalesData %>% group_by(Day) %>% summarise(n = n(), Gross = sum(Gross), Net = sum(Net))
+
+DailySales
+
+DailySales[order(-DailySales$Net),][1,]
+DailySales[order(-DailySales$Gross),][1,]
+DailySales[order(-DailySales$n),][1,]
+
+
+#geom_line(aes(Day, Net))+
+
+ggplot(DailySales,
+       aes(Day, Net)) +
+  geom_area(stat="identity",
+            position="identity",
+            col = "red3",
+            size = 0.5,
+            alpha = 0.5,
+            fill="red")+
+  labs(x="",y="Daily Net Profit", title = "Monthly Net Profit Overview")+
+  theme(plot.title = element_text(hjust = 0.5))
+
+
+```
+
+<br>
+<br>
+
+##### Product Breakdown
+<br>
+```{r,warning=F,message=F,fig.align='center'}
+
+
+
+```
+
+<br>
+<br>
+
+##### Targets
+<br>
+
+<br>
+<br>
+
+##### Customer Growth
+<br>
+
+<br>
+<br>
+
+##### Final Product
 <br>
 
 <br>
