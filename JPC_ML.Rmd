@@ -1,6 +1,9 @@
 ---
-title: "Machine Learning in R"
-author: "Joshua P. Cullum"
+title: |
+  <center> Machine Learning in R </center>
+  <center>    </center>
+author: |
+  <center> Joshua P. Cullum </center>
 output: html_document
 ---
 
@@ -16,7 +19,7 @@ For this analysis, we will stick with the `iris` dataset built in to R. This dat
 <br>
 Going back to our KNN model, we will first take a look at the data, comparing each variable to each other, grouping by species. 
 <br>
-```{r, warning=F,message=F}
+```{r, warning=F,message=F,fig.align='center'}
 
 library(class)
 library(caret)
@@ -133,7 +136,7 @@ confusionMatrix(table(Iris.knn.5, Iris.testLab))
 <br>
 We can see here the accuracy displayed for each one, as well as a matrix analysis. To better understand the model, we can plot the accuracy vs. the k-value chosen, using a loop, and running the model with k = 1:15. Then, we will run this 100 times and average those 10 runs of k=1:15.
 <br>
-```{r,warning=F,message=F}
+```{r,warning=F,message=F,fig.align='center'}
 
 accuracy <- vector()
 
@@ -166,24 +169,35 @@ for (i in 1:run_by) {
 
 Mod.eval.test$avg <- (rowSums(Mod.eval.test)-Mod.eval.test[,1])/run_by
 
-ggplot(Mod.eval.test, aes(n,avg))+geom_point(size = 3)
+ggplot(
+  Mod.eval.test, 
+  aes(n,avg))+
+  geom_point(pch=21, 
+             size = 4, 
+             col = "black", 
+             fill = "#A7C7E7")+
+  labs(x="K Number",
+       y="Accuracy",
+       title="Averaged Accuracy for K Values (100 iterations)") +
+  theme(plot.title = element_text(hjust = 0.5))
 
 ```
 <br>
 <br>
-From the graph we can see that the best K may be either 5, 6, or 7. Below that accuracy declines, and after that accuracy seems to wander.
+From the graph we can see that the best K may be either 5, 6, or 7. Below that accuracy declines, and after that accuracy seems to be inconsistent. Utilizing a k of 5 seems to be best here.
 
 <br>
 <br>
+
 ### Final Thoughts
 <br>
-
+In the end, while the K-nearest neighbor method is simple, it can be quite effective. For a more complex example a more complex approach with more data preparation would be needed. Each case will be unique, but the basic concepts remain the same. That is why model building is a science: we come in with hypotheses, create a model, test it, then go back to the drawing board to optimize and grow. There is no one size fits all, but understanding the basics is essential. 
 <br>
 <br>
 
 ### Contact Information
 <br>
-Thank you for taking time to peruse my analysis. While this is a science, it can also fall into the category of an art form. If you would like to contact me for any reason, please feel free to reach me at my email:
+Thank you for taking time to peruse my code. While I used many models during my time at University I am constantly trying to increase my skills and understanding of model building itself. There are so many components and techniques used in model building, and I find it all fascinating. If you would like to contact me for any reason, please feel free to reach me at my email:
 
 Email: joshuapcullum@gmail.com
 
