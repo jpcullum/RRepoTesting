@@ -1,6 +1,9 @@
 ---
-title: "Automated Report Writing"
-author: "Joshua P. Cullum"
+title: |
+  <center> Automated Report Writing </center>
+  <center>    </center>
+author: |
+  <center> Joshua P. Cullum </center>
 output: html_document
 ---
 
@@ -100,28 +103,32 @@ Prof.net
 
 library(ggplot2)
 library(dplyr)
+library(ggthemes)
 
 DailySales <- SalesData %>% group_by(Day) %>% summarise(n = n(), Gross = sum(Gross), Net = sum(Net))
 
 DailySales
 
+#max net sales
+
 DailySales[order(-DailySales$Net),][1,]
+
+#max gross sales
+
 DailySales[order(-DailySales$Gross),][1,]
+
+#max sales transactions
+
 DailySales[order(-DailySales$n),][1,]
 
 
-#geom_line(aes(Day, Net))+
 
-ggplot(DailySales,
-       aes(Day, Net)) +
-  geom_area(stat="identity",
-            position="identity",
-            col = "red3",
-            size = 0.5,
-            alpha = 0.5,
-            fill="red")+
-  labs(x="",y="Daily Net Profit", title = "Monthly Net Profit Overview")+
-  theme(plot.title = element_text(hjust = 0.5))
+ggplot(DailySales) +
+  geom_bar(aes(Day,Net),stat="identity", col="dark gray",fill="#7ec4cf",alpha = 0.8)+
+  labs(x="",y="Daily Net Profit", title = "Monthly Net Profit by Day")+
+  theme(plot.title = element_text(hjust = 0.5))+
+  coord_cartesian(ylim=c(min(DailySales$Net)*0.955,max(DailySales$Net)*1.045))
+
 
 
 ```
@@ -133,6 +140,31 @@ ggplot(DailySales,
 <br>
 ```{r,warning=F,message=F,fig.align='center'}
 
+Pro.day <- data.frame(Product = as.numeric())
+
+for (i in 1:31) {
+  
+  Pro.day.f <- SalesData %>% filter(Day == i) %>% group_by(Product) %>% summarise(n=sum(Count))
+  
+  Pro.day.f$Day <- i
+  
+  Pro.day <- rbind(Pro.day,Pro.day.f)
+  
+}
+
+Pro.tot <- SalesData %>% group_by(Product) %>% summarise(n=n())
+
+Pro.tot <- data.frame(Pro.tot[order(-Pro.tot$n),])
+
+Pro.day$Product <- paste("P", Pro.day$Product, sep = "")
+
+Pro.tot$Product <- paste("P", Pro.tot$Product, sep = "")
+
+ggplot(Pro.day %>% filter(Product == Pro.tot[1,1] | Product == Pro.tot[2,1] | Product == Pro.tot[3,1]), aes(x=Day, y=n, color = Product)) +
+  geom_line(size = 1)+
+  labs(x="Day of Month",y="Products Sold", title = "Top Three Products Daily Sales")+
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme_hc()
 
 
 ```
@@ -142,13 +174,74 @@ ggplot(DailySales,
 
 ##### Targets
 <br>
+In a realistic scenario, we would have sales targets for the month. Here, because this is a fictional situation, we do not know those values. However we will create them based to showcase how a graph to display targets could look.
+<br>
+```{r, message=F,warning=F}
+
+Pro.tot.tar <- Pro.tot[1:3,]
+
+Pro.tot.tar <- rbind(Pro.tot.tar, data.frame(Product = c("P13","P19","P15"),
+                                n = c(round(0.97*Pro.tot[1,2],0), round(0.86*Pro.tot[2,2],0), round(1.1*Pro.tot[3,2],0))))
+
+Pro.tot.tar$Class <- rep(c("Actual","Target"),each=3)
+
+ggplot(Pro.tot.tar, aes(x=Product, y=n, fill = Class))+
+  geom_bar(position="dodge",stat="identity")+
+  coord_flip()+
+  labs(x="",y="Products Sold",title="Top Three Products Sales Targets Comparison")+
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme_hc()
+
+```
 
 <br>
 <br>
 
 ##### Customer Growth
 <br>
+```{r,warning=F,message=F,fig.align='center'}
 
+Custom.day <- data.frame(Customer = as.numeric())
+
+for (i in 1:20) {
+  
+  Custom.day.f <- SalesData %>% filter(Customer == 1) 
+  
+  for (b in 1:31) {
+    
+      Custom.day.f.2 <- Custom.day.f %>% filter(Day == i) %>% group_by(Product) %>% summarise(n=n())
+  
+      Custom.day.f.2$Day <- i
+  
+      Custom.day <- rbind(Custom.day,Custom.day.f.2)
+    
+    }
+  
+}
+
+
+
+
+
+
+Custom.tot <- SalesData %>% group_by(Customer) %>% summarise(n=n())
+
+Custom.tot <- data.frame(Custom.tot[order(-Custom.tot$n),])
+
+Custom.day$Customer <- paste("C", Custom.day$Customer, sep = "")
+
+Custom.tot$Customer <- paste("C", Custom.tot$Customer, sep = "")
+
+
+ggplot(Custom.day %>% filter(Customer == Custom.tot[1,1] | Customer == Custom.tot[2,1] | Customer == Custom.tot[3,1]), aes(x=Day, y=n, color = Customer)) +
+  geom_line(size = 1)+
+  ylim(0,35) +
+  labs(x="Day of Month",y="Products Sold", title = "Top Three Products Daily Sales")+
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme_hc()
+
+
+```
 <br>
 <br>
 
