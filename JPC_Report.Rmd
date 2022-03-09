@@ -9,18 +9,16 @@ output: html_document
 
 ### Purpose
 <br>
-Writing reproducible reports remains an important component of any operation, whether this be for something as simple as sales reports for a lemonade stand or fluctuating Phosphate levels in discharge water from a water treatment plant or user interaction data at a multi-million dollar corporation. While there are many sophisticated tools enabling easy, consistent report writing, sometimes it is important to be able to build small scripts to complete daily tasks at an individual level, freeing up time for more important things.
-That is something I have learned working my job at in an office setting at a state environmental agency. Many aspects of my job are consistent, reproducible, and would actually benefit from having a structured framework as opposed to being individually crafted every week. Automation not only saves time it also increases savings exponentially by being more accurate, having no transcription errors, and removing the human from the equation. Ask any professional in almost any field and they will tell you the largest source of error is that of human error. In terms of consistent reports, taking the writer out of the equation except for the initial setup can accomplish this.
-<br>
-We will bring in a built-in dataset in RStudio, structurally analyze it and briefly lay out the direction this report will head, followed by building this automation using R.
+Writing reproducible reports remains an important component of any operation, whether as simple as sales reports for a lemonade stand all the way to user interaction data at a multi-million dollar corporation. While there are many sophisticated tools enabling easy, consistent report writing, sometimes it is important to be able to build small scripts to complete daily tasks at an individual level, freeing up time for more important things.
+That is something I have learned working my job in an office setting at my state's environmental agency. Many aspects of my job are consistent, reproducible, and would actually benefit from having a structured framework as opposed to being individually crafted every week. Automation not only saves time it also increases savings exponentially by entirely removing the human from the equation. Ask any professional in almost any field and they will agree that the largest source of error is human error. In terms of consistent reports, taking the writer out of the equation except for the initial setup can accomplish this, along with speeding up the process from several hours down to five minutes.
 <br>
 <br>
 
 ### Dataset and Structure
 <br>
-For this example, we will create our own dataset. This will allow us to build something similar to record keeping for weekly revenue for a business. Most customer databases are based in SQL, as this type of data (sales, customers, items, etc.) is best kept in a relational database. For the sake of this markdown document, we will build a simplified version of this in R, by creating what would be a query table.
+For this example, we will create our own dataset. This will allow us to build something similar to record keeping for daily revenue for a business. Most customer databases are based in SQL, as this type of data (sales, customers, items, etc.) is best kept in a relational database. For the sake of this markdown document, we will build a simplified version of this in R by creating what would be a query table.
 <br>
-Our table will be similar to the following
+Our table will be similar to the following:
 <br>
 
  Transaction   Product   Customer   # of Items   UPrice   UCost   Gross   Net
@@ -68,7 +66,7 @@ SalesData$Net <- SalesData$Gross - (SalesData$Cost*SalesData$Count)
 
 ### Report Writing
 <br>
-Here we will break down each item at a time, run some numbers, and create some visuals. Then we will build it all together into a report. This is the code that could be run every week, no matter the numbers at place, to produce a consistent report at the end of every week. This makes it easy for everyone to visual patterns over time, and cuts down on time needed to create reports.
+Here we will break down each item at a time, run some numbers, and create some visuals. Then we will build the essentials into a report graphic. This is the code that could be run every week, no matter the numbers at play, to produce a consistent report at the end of every week, month, and so on. This makes it easy for everyone to visual patterns over time, and cuts down on time needed to create reports.
 <br>
 <br>
 
@@ -122,19 +120,26 @@ DailySales[order(-DailySales$Gross),][1,]
 
 DailySales[order(-DailySales$n),][1,]
 
+#color palette
+
+col.pal <- c("#a9abac", "#101214", "#c32757", "#462b36", "#109d47", "#806450", "#7c2487", "#292827", "#cf7923")
 
 
 gg.Profits.month <- ggplot(DailySales) +
-  geom_bar(aes(Day,Net),stat="identity", col="dark gray",fill="#7ec4cf",alpha = 0.8)+
+  geom_bar(aes(Day,Net),stat="identity", col=col.pal[1],fill=col.pal[3],alpha = 0.8)+
   labs(x="Day of Month",y="Daily Net Profit", title = "Monthly Net Profit by Day")+
   coord_cartesian(ylim=c(min(DailySales$Net)*0.955,max(DailySales$Net)*1.045))+
-  theme(plot.title = element_text(hjust = 0.5, size = 12), 
-        axis.title = element_text(size=8),
-        legend.text = element_text(size = 8),
-        legend.title = element_text(size = 8),
-        plot.background = element_rect(fill = "light gray"),
-        legend.background = element_rect(fill = "light gray")) +
-  theme_hc()
+  theme_hc() +
+  theme(plot.title = element_text(hjust = 0.5, size = 12, color = col.pal[1]), 
+        axis.title = element_text(size=8, color = col.pal[1]),
+        axis.text = element_text(color = col.pal[1]),
+        legend.text = element_text(size = 8, color = col.pal[1]),
+        legend.title = element_text(size = 8, color = col.pal[1]),
+        plot.background = element_rect(fill = col.pal[8]),
+        legend.background = element_rect(fill = col.pal[8]),
+        axis.line = element_line(colour = col.pal[6], 
+                      size = 0.5, linetype = "solid"),
+        panel.grid.major.y = element_blank())
 
 gg.Profits.month
 
@@ -171,13 +176,18 @@ Pro.tot$Product <- paste("P", Pro.tot$Product, sep = "")
 gg.Top.pro <- ggplot(Pro.day %>% filter(Product == Pro.tot[1,1] | Product == Pro.tot[2,1] | Product == Pro.tot[3,1]), aes(x=Day, y=n, color = Product)) +
   geom_line(size = 1)+
   labs(x="Day of Month",y="Products Sold", title = "Top Three Products Daily Sales", fill = "")+
-  theme(plot.title = element_text(hjust = 0.5, size = 10), 
-        axis.title = element_text(size=8),
-        legend.text = element_text(size = 8),
-        legend.title = element_text(size = 8),
-        plot.background = element_rect(fill = "light gray"),
-        legend.background = element_rect(fill = "light gray")) +
-  theme_hc()
+  theme_hc() +
+  theme(plot.title = element_text(hjust = 0.5, size = 12, color = col.pal[1]), 
+        axis.title = element_text(size=8, color = col.pal[1]),
+        axis.text = element_text(color = col.pal[1]),
+        legend.text = element_text(size = 8, color = col.pal[1]),
+        legend.title = element_text(size = 8, color = col.pal[1]),
+        plot.background = element_rect(fill = col.pal[8]),
+        legend.background = element_rect(fill = col.pal[8]),
+        axis.line = element_line(colour = col.pal[6], 
+                      size = 0.5, linetype = "solid"),
+        panel.grid.major.y = element_blank()) +
+  scale_color_manual(values=c(col.pal[5], col.pal[7], col.pal[9]))
 
 gg.Top.pro
 
@@ -189,9 +199,9 @@ gg.Top.pro
 
 ##### Targets
 <br>
-In a realistic scenario, we would have sales targets for the month. Here, because this is a fictional situation, we do not know those values. However we will create them based to showcase how a graph to display targets could look.
+In a realistic scenario, we would have sales targets for the month. Here, because this is a fictional situation, we do not know those values. However we will create them to showcase how a graph to display targets could look.
 <br>
-```{r, message=F,warning=F}
+```{r, message=F,warning=F,fig.align='center'}
 
 Pro.tot.tar <- Pro.tot[1:3,]
 
@@ -201,16 +211,22 @@ Pro.tot.tar <- rbind(Pro.tot.tar, data.frame(Product = Pro.tot.tar[,1],
 Pro.tot.tar$Class <- rep(c("Actual","Target"),each=3)
 
 gg.Pro.tar <- ggplot(Pro.tot.tar, aes(x=Product, y=n, fill = Class))+
-  geom_bar(position="dodge",stat="identity")+
+  geom_bar(position="dodge",stat="identity", col = col.pal[1])+
   coord_flip()+
-  labs(x="",y="Products Sold",title="Top Three Products Sales Targets Comparison")+
-  theme(plot.title = element_text(hjust = 0.5, size = 10), 
-        axis.title = element_text(size=8),
-        legend.text = element_text(size = 8),
-        plot.background = element_rect(fill = "light gray"),
-        legend.background = element_rect(fill = "light gray")) +
-  theme_hc()+
-  guides(fill=guide_legend(title=""))
+  labs(x="",y="Products Sold",title=paste("Top Three Products \nSales Targets Comparison", sep = "\n"))+
+  theme_hc() +
+  theme(plot.title = element_text(hjust = 0.5, size = 12, color = col.pal[1]), 
+        axis.title = element_text(size=8, color = col.pal[1]),
+        axis.text = element_text(color = col.pal[1]),
+        legend.text = element_text(size = 8, color = col.pal[1]),
+        legend.title = element_text(size = 8, color = col.pal[1]),
+        plot.background = element_rect(fill = col.pal[8]),
+        legend.background = element_rect(fill = col.pal[8]),
+        axis.line = element_line(colour = col.pal[6], 
+                      size = 0.5, linetype = "solid"),
+        panel.grid.major.y = element_blank())+
+  guides(fill=guide_legend(title="")) +
+  scale_fill_manual(values=c(col.pal[3], col.pal[6]))
 
 gg.Pro.tar
 
@@ -223,7 +239,7 @@ gg.Pro.tar
 <br>
 To pull this all together, we can create a simple infographic that pulls together all of the necessary information. If we were to take this further, we might consider building a Shiny dashboard that allows interactive displays, or, for a more complete graphic displayed to external shareholders we might bring individual elements into a product such as Adobe for more precise editing.
 <br>
-```{r,message=F,warning=F}
+```{r,message=F,warning=F,fig.align='center'}
 
 ggarrange(gg.Profits.month, 
           ggarrange(
@@ -236,9 +252,9 @@ ggarrange(gg.Profits.month,
 
 ### Conclusions
 <br>
-Overall, this document demonstrates the power of using R to easily take something as simple as a CSV of weekly sales and turn it into a powerful, simply weekly checkup tool. With more time and a specific goal, a complex analysis could be created. A check could even be incorporated to indicate whether a long or short report was desired. And, as mentioned earlier, this could easily be built as a R Shiny dashboard which would allow for a more interactive display and analysis. Once written, this code can be run as many times as needed, without any changes, and will provide a consistent report that can be cataloged and compared to past weeks. Raw number analysis can also be exported and automatically saved to folders named after the week or month the report was run for.
+Overall, this document demonstrates the power of using R to easily take something as simple as a CSV of weekly sales and turn it into a powerful, simply weekly checkup tool. With more time and a specific goal, a complex analysis could be created. A check could even be incorporated to indicate whether a long or short report was desired. And, as mentioned earlier, this could easily be built as a R Shiny dashboard which would allow for a more interactive display and analysis. Once written, this code can be run as many times as needed, without any changes, and will provide a consistent report that can be cataloged and compared to past months. Raw number analysis can also be exported and automatically saved to folders named after the week or month the report was run for.
 <br>
-In the end, R provides a powerful tool to allow us to quickly, efficiently, and consistently review the large volumes of data every organization now encountered, and because it is relatively simple to work with it can be tailed to each individal task without issue.
+In the end, R provides a powerful tool to allow us to quickly, efficiently, and consistently review the large volumes of data every organization now encounters, and because it is relatively simple to work with it can be tailored to each individual task without issue.
 <br>
 <br>
 
